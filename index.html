@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Inscripción</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Incluye Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Inscripción</h1>
+        <form id="inscripcionForm">
+            <input type="text" id="nombre" placeholder="Nombre completo" required>
+            <input type="email" id="email" placeholder="Correo electrónico" required>
+            <input type="tel" id="telefono" placeholder="Teléfono">
+            <button type="submit">Enviar</button>
+        </form>
+        <div id="mensaje"></div>
+    </div>
 
+    <!-- Configuración de Firebase y lógica -->
+    <script src="firebase-config.js"></script>
+    <script>
+        const form = document.getElementById('inscripcionForm');
+        const mensajeDiv = document.getElementById('mensaje');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const telefono = document.getElementById('telefono').value;
+
+            // Guardar en Firebase
+            const db = firebase.database();
+            db.ref('inscripciones').push({
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                fecha: new Date().toISOString()
+            })
+            .then(() => {
+                mensajeDiv.innerHTML = "✅ Inscripción exitosa!";
+                form.reset();
+            })
+            .catch((error) => {
+                mensajeDiv.innerHTML = "❌ Error: " + error.message;
+            });
+        });
+    </script>
+</body>
+</html>
